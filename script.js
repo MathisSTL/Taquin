@@ -1,31 +1,20 @@
 function shuffle() {
     var grid = document.getElementById('game');
     var items = Array.from(grid.children);
+    var emptyItem = document.querySelector('.empty');
 
-    // Shuffle the items using Fisher-Yates algorithm
-    for (var i = items.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        [items[i].innerText, items[j].innerText] = [items[j].innerText, items[i].innerText];
+    for (var i = 0; i < 100; i++) {
+        var neighbors = getNeighbors(emptyItem);
+        var randomIndex = Math.floor(Math.random() * neighbors.length);
+        var randomNeighbor = neighbors[randomIndex];
+        
+        emptyItem.className = 'item';
+        emptyItem.innerText = randomNeighbor.innerText;
+        randomNeighbor.className = 'empty';
+        randomNeighbor.innerText = '';
+
+        emptyItem = randomNeighbor;
     }
-
-    if (!isSolvable(items.map(item => item.innerText))) {
-        // If the shuffled configuration is not solvable, swap the first two items
-        [items[0].innerText, items[1].innerText] = [items[1].innerText, items[0].innerText];
-    }
-
-    items.forEach(item => grid.appendChild(item));
-}
-
-function isSolvable(puzzle) {
-    var inversions = 0;
-    for (var i = 0; i < puzzle.length; i++) {
-        for (var j = i + 1; j < puzzle.length; j++) {
-            if (puzzle[i] && puzzle[j] && puzzle[i] > puzzle[j]) {
-                inversions++;
-            }
-        }
-    }
-    return inversions % 2 === 0;
 }
 function loadGame() {
     shuffle();
