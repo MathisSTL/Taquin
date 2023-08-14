@@ -38,3 +38,11 @@ body {
     color:#fff;
     opacity: 0;
 }
+
+.item {
+    pointer-events: none;
+}
+
+.clickable {
+    pointer-events: auto;
+}
