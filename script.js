@@ -1,44 +1,27 @@
-function shuffle() {
-    var grid = document.getElementById('game');
-    var items = Array.from(grid.children);
+var isShuffled = false;
+
+function shuffleAndEnable() {
+    if (!isShuffled) {
+        shuffle();
+        isShuffled = true;
+
+        var items = document.querySelectorAll('.item');
+        items.forEach(item => item.classList.add('clickable'));
+    }
+}
+
+function moveTile(tile) {
     var emptyItem = document.querySelector('.empty');
 
-    for (var i = 0; i < 100; i++) {
-        var neighbors = getNeighbors(emptyItem);
-        var randomIndex = Math.floor(Math.random() * neighbors.length);
-        var randomNeighbor = neighbors[randomIndex];
-        
-        emptyItem.className = 'item';
-        emptyItem.innerText = randomNeighbor.innerText;
-        randomNeighbor.className = 'empty';
-        randomNeighbor.innerText = '';
+    if (getDistance(tile.offsetLeft, tile.offsetTop, emptyItem.offsetLeft, emptyItem.offsetTop) <= 110) {
+        emptyItem.classList.remove('empty');
+        emptyItem.textContent = tile.textContent;
+        tile.classList.add('empty');
+        tile.textContent = '';
 
-        emptyItem = randomNeighbor;
+        checkVictory();
     }
 }
-function loadGame() {
-    shuffle();
-}
-
-window.addEventListener('click', function (e) {
-
-    //On est sur un Ã©lÃ©ment de classe item (un chiffre)
-    if(e.target.className === 'item') {
-        var emptyItem = document.querySelector('.empty');
-
-        if(getDistance(e.target.offsetLeft, e.target.offsetTop, emptyItem.offsetLeft, emptyItem.offsetTop) <= 110)
-        {
-            //On doit intervertir le vide et le chiffre
-            emptyItem.className = 'item';
-            emptyItem.innerText = e.target.innerText;
-            e.target.className = 'empty';
-            e.target.innerText = '';
-
-            checkVictory();
-        }
-    }
-
-});
 
 function getDistance(x1, y1, x2, y2) {
     var a = x1 - x2;
@@ -47,17 +30,24 @@ function getDistance(x1, y1, x2, y2) {
 }
 
 function checkVictory() {
-
     var items = document.querySelectorAll('#game>div');
     var score = 0;
-    for(var i = 0; i < items.length; i++) {
-        if(items[i].innerText === ('' + (i + 1))) {
+    for (var i = 0; i < items.length; i++) {
+        if (items[i].innerText === ('' + (i + 1))) {
             score++;
         }
     }
 
-    if(score >= 15) {
+    if (score >= 15) {
         var victoryItem = document.querySelector('.victory');
         victoryItem.style.opacity = "1";
     }
 }
+
+// Rest of your code remains unchanged
+
+window.addEventListener('click', function (e) {
+    if (isShuffled && e.target.classList.contains('clickable')) {
+        moveTile(e.target);
+    }
+});
