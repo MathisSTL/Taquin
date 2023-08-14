@@ -1,10 +1,32 @@
 function shuffle() {
     var grid = document.getElementById('game');
-    for(var i = grid.children.length; i >= 0; i--) {
-        grid.appendChild(grid.children[Math.random() * i | 0]);
+    var items = Array.from(grid.children);
+
+    // Shuffle the items using Fisher-Yates algorithm
+    for (var i = items.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        [items[i].innerText, items[j].innerText] = [items[j].innerText, items[i].innerText];
     }
+
+    if (!isSolvable(items.map(item => item.innerText))) {
+        // If the shuffled configuration is not solvable, swap the first two items
+        [items[0].innerText, items[1].innerText] = [items[1].innerText, items[0].innerText];
+    }
+
+    items.forEach(item => grid.appendChild(item));
 }
 
+function isSolvable(puzzle) {
+    var inversions = 0;
+    for (var i = 0; i < puzzle.length; i++) {
+        for (var j = i + 1; j < puzzle.length; j++) {
+            if (puzzle[i] && puzzle[j] && puzzle[i] > puzzle[j]) {
+                inversions++;
+            }
+        }
+    }
+    return inversions % 2 === 0;
+}
 function loadGame() {
     shuffle();
 }
