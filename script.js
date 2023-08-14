@@ -44,8 +44,6 @@ function checkVictory() {
     }
 }
 
-// Rest of your code remains unchanged
-
 window.addEventListener('click', function (e) {
     if (isShuffled && e.target.classList.contains('clickable')) {
         moveTile(e.target);
